@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test test!</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+<div id="app">
+
+    <div id="centerColumn">
+
+        <table id="resultTable">
+            <thead >
+            <tr>
+                <!-- scope är bara för tydlighetens skull -->
+                <th ></th>
+                <th >Poäng</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td >Ettor</td>
+                <td >{{ett}}</td>
+
+            </tr>
+            <tr>
+                <td >Tvåor</td>
+                <td >{{tva}}</td>
+
+            </tr>
+            <tr>
+                <td >Treor</td>
+                <td >{{tre}}</td>
+
+            </tr>
+            <tr>
+                <td >Fyror</td>
+                <td >{{fyra}}</td>
+
+            </tr>
+            <tr>
+                <td>Femmor</td>
+                <td >{{fem}}</td>
+
+            </tr>
+            <tr>
+                <td >Summa</td>
+                <td >{{sum}}</td>
+
+            </tr>
+
+            </tbody>
+        </table>
+        <h2> Hej!</h2><p>- Tryck på (kasta) för att kasta tärningar.<br>- Du har tre kast per omgång <br>- Du kan stanna och låsa tärningar när du vill.</p>
+        <h3>{{msg}}</h3>
+        <p>___________________________________</p>
+        <h3>{{sumMsg}}</h3>
+
+        <div v-if="isfinished" >
+            <button   v-on:click="newRound"> click to förtsätt</button>
+        </div>
+        <div v-if="!isfinished">
+            <button :disabled="stop()" @click="randomValue" >kasta!</button>
+            <button  @click="sortDice"  :disabled="stop()">stanna!</button>
+        </div>
+    </div>
+
+    <div id="diceCon">
+        <div   v-for="(dice, index) in dices" :id="dice">
+            <div  :class="`dice_${dice}`"></div>
+            <button v-on:click="saveDice(index)"> Låsa  </button>
+        </div>
+    </div>
+
+    <div id="savedDice">
+        <div  v-for="(dice, index) in savedArray" :id="dice">
+            <div  :class="`dice_${dice}`"></div>
+            <button v-on:click="returnDice(index)"> låsa upp  </button>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    var app= new Vue({
+
+        el:"#app",
+        data:{
+
+            dices:[1,2,3,4,5],
+            count: 0,
+            array:[],
+            dice:[0,0,0,0,0],
+            savedArray:[],
+            final:[],
+            sum:0,
+            msg:'',
+            sumMsg:'' ,
+            isfinished:false,
+            ett:0,tva:0,tre:0,fyra:0,fem:0
+
+
+
+
+        },
+        methods:{
+            randomValue: function(){
+                this.array = this.dices;
+                for (let i = 0 ; i< this.array.length; i++) {
+                    let j = Math.floor(  Math.random() * (5) + 1);
+                    this.array[i] =j;
+                }
+                this.count++;
+                console.log("print array: " + this.array)
+                this.msg='Du har '+(3-this.count)+' kast kvar.  '
+
+            },
+            stop: function(){
+                let f=false;
+                if (this.count>2)
+                {f=true
+                    this.sortDice()
+                }
+                return f;
+
+            },
+            saveDice:function (index) {
+                console.log("print index: " + index)
+                this.savedArray.push(this.array[index])
+                this.array.splice(index,1)
+                console.log("print array: " + this.array)
+                console.log("print saved array: " + this.savedArray)
+
+
+            },
+            returnDice:function (index) {
+                console.log("print index: " + index)
+                this.array.push(this.savedArray[index])
+                this.savedArray.splice(index,1)
+                console.log("print array: " + this.array)
+                console.log("print saved array: " + this.savedArray)
+
+
+            },
+            sortDice:function () {
+                console.log("print array: " + this.array)
+                console.log("print saved array: " + this.savedArray)
+
+                this.final=this.array.concat(this.array)
+                this.final=this.array.concat(this.savedArray)
+
+                console.log("print final array: " + this.final)
+
+
+                let onesCont = 0
+                let twosCont = 0
+                let threesCont = 0
+                let foursCont = 0
+                let fivesCont = 0
+
+                for (let i = 0 ; i< 5; i++){
+                    switch (this.final[i]) {
+                        case 1: onesCont++; break;
+                        case 2: twosCont++; break;
+                        case 3: threesCont++; break;
+                        case 4: foursCont++; break;
+                        case 5: fivesCont++; break;
+                    }
+                }
+
+                /*  console.log("ones    "+onesCont)
+                  console.log("twos    "+twosCont)
+                  console.log("threes  "+threesCont)
+                  console.log("fours   "+foursCont)
+                  console.log("fives   "+fivesCont)*/
+
+                onesCont = onesCont*1
+                twosCont = twosCont*2
+                threesCont = threesCont*3
+                foursCont = foursCont*4
+                fivesCont = fivesCont*5
+                /*    console.log("___________________________    ");
+                     console.log("ones    "+onesCont);
+                     console.log("twos    "+twosCont);
+                     console.log("threes  "+threesCont);
+                     console.log("fours   "+foursCont);
+                     console.log("fives   "+fivesCont);*/
+                this.ett=onesCont;
+                this.tva=twosCont;
+                this.tre=threesCont;
+                this.fyra=foursCont;
+                this.fem=fivesCont;
+
+                this.count=3;
+                this.hog= Math.max(this.ett,this.tva,this.tre, this.fyra,this.fem)
+
+                this.msg='Din högsta poäng är:'+this.hog;
+                this.isfinished=true;
+
+            },
+            newRound:function () {
+
+                this.count=0;
+                this.isfinished=false;
+                console.log(this.sum);
+                console.log(this.hog)
+
+                this.sum=this.sum+this.hog;
+                this.sumMsg='Du har '+this.sum+' poäng';
+                console.log(this.sum)
+                console.log(this.hog)
+
+
+            }
+
+
+
+
+
+
+        }
+    })
+
+</script>
+</body>
+</html>
