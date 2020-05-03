@@ -2,82 +2,104 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>test test!</title>
+    <title>Spela Yatzy!</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
 <div id="app">
 
+    <!-- första div för Yatzy protokoll  -->
     <div id="centerColumn">
+        <h2> Hej!</h2>
+        <p>1- Tryck på (kasta) knappen för att kasta tärningar.</p>
+        <p>2- Du har tre kast per omgång  </p>
+        <p>3- Du ska trycka på poäng som du vill spara på tabellen innan du går till nästa omgång </p>
+        <p>4- Du kan stanna eller låsa in tärningar när du vill.</p>
 
         <table id="resultTable">
             <thead >
             <tr>
-                <!-- scope är bara för tydlighetens skull -->
                 <th ></th>
                 <th >Poäng</th>
-
+                <th >Sparade poäng</th>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td >Ettor</td>
-                <td >{{ett}}</td>
-
+                <td ><button v-on:click="choosePoints(1)" :disabled="this.dis1" >{{ett}}</button></td>
+                <td >{{savedValue[0]}}</td>
             </tr>
             <tr>
                 <td >Tvåor</td>
-                <td >{{tva}}</td>
-
+                <td ><button v-on:click="choosePoints(2)" :disabled="this.dis2" >{{tva}}</button></td>
+                <td >{{savedValue[1]}}</td>
             </tr>
             <tr>
                 <td >Treor</td>
-                <td >{{tre}}</td>
-
+                <td ><button v-on:click="choosePoints(3)" :disabled="this.dis3" >{{tre}}</button></td>
+                <td >{{savedValue[2]}}</td>
             </tr>
             <tr>
                 <td >Fyror</td>
-                <td >{{fyra}}</td>
-
+                <td ><button v-on:click="choosePoints(4)" :disabled="this.dis4" >{{fyra}}</button></td>
+                <td >{{savedValue[3]}}</td>
             </tr>
             <tr>
                 <td>Femmor</td>
-                <td >{{fem}}</td>
-
+                <td ><button v-on:click="choosePoints(5)" :disabled="this.dis5" >{{fem}}</button></td>
+                <td >{{savedValue[4]}}</td>
             </tr>
             <tr>
-                <td >Summa</td>
-                <td >{{sum}}</td>
+                <td>Tretal</td>
+                <td ><button v-on:click="choosePoints(6)" :disabled="this.dis6" >{{tretal}}</button></td>
+                <td >{{savedValue[5]}}</td>
+            </tr>
+            <tr>
+                <td>Fyrtal</td>
+                <td ><button v-on:click="choosePoints(7)" :disabled="this.dis7" >{{fyrtal}}</button></td>
+                <td >{{savedValue[6]}}</td>
+            </tr>
+            <tr>
+                <td>Yatzy</td>
+                <td ><button v-on:click="choosePoints(8)" :disabled="this.dis8" >{{yatzy}}</button></td>
+                <td >{{savedValue[7]}}</td>
+            </tr>
 
+            <tr>
+                <td >Summa</td>
+                <td ></td>
+                <td >{{sum}}</td>
             </tr>
 
             </tbody>
-        </table>
-        <h2> Hej!</h2><p>- Tryck på (kasta) för att kasta tärningar.<br>- Du har tre kast per omgång <br>- Du kan stanna och låsa tärningar när du vill.</p>
-        <h3>{{msg}}</h3>
-        <p>___________________________________</p>
-        <h3>{{sumMsg}}</h3>
+        </table>     <!--  Yatzy table  -->
 
-        <div v-if="isfinished" >
-            <button   v-on:click="newRound"> click to förtsätt</button>
+        <h2>{{msg}}</h2>
+
+        <div v-if="isfinished" >       <!--  div visa button( till nästa omgång) som återställ  värden för att börja nytt omgång    -->
+            <button class="diceB"  v-on:click="newRound" :disabled="om"> till nästa omgång </button>
         </div>
-        <div v-if="!isfinished">
-            <button :disabled="stop()" @click="randomValue" >kasta!</button>
-            <button  @click="sortDice"  :disabled="stop()">stanna!</button>
+
+        <div v-if="!isfinished">       <!--  div visa button( kasta )och (stanna) som ger tärningar random value mellan 1-5    -->
+            <button class="diceB" :disabled="stop()" @click="randomValue" >Kasta!</button> <!--  ger tärningar random value mellan 1-5    -->
+            <button  class="diceB"  @click="stanna"  :disabled="disStanna">stanna!</button>   <!--  spara aktuellt tärningar    -->
         </div>
     </div>
 
+    <!-- andra div för tärningar  -->
     <div id="diceCon">
-        <div   v-for="(dice, index) in dices" :id="dice">
+        <div   v-for="(dice, index) in dices" :id="dice">  <!-- loop för visa tärningar med button -->
             <div  :class="`dice_${dice}`"></div>
-            <button v-on:click="saveDice(index)"> Låsa  </button>
+            <button :disabled="kasta" class="diceB" v-on:click="saveDice(index)"> Låsa in </button>
         </div>
     </div>
 
+    <!--tredje div för sparat tärningar  -->
     <div id="savedDice">
-        <div  v-for="(dice, index) in savedArray" :id="dice">
+        <div  v-for="(dice, index) in savedArray" :id="dice"> <!-- loop  för visa sparat tärningar med button  -->
             <div  :class="`dice_${dice}`"></div>
-            <button v-on:click="returnDice(index)"> låsa upp  </button>
+            <button class="diceB" v-on:click="returnDice(index)"> låsa upp  </button>
         </div>
     </div>
 
@@ -89,7 +111,6 @@
 
         el:"#app",
         data:{
-
             dices:[1,2,3,4,5],
             count: 0,
             array:[],
@@ -97,129 +118,186 @@
             savedArray:[],
             final:[],
             sum:0,
-            msg:'',
-            sumMsg:'' ,
+            msg:'Tryck på kasta!',
             isfinished:false,
-            ett:0,tva:0,tre:0,fyra:0,fem:0
-
-
-
-
+            ett:0,tva:0,tre:0,fyra:0,fem:0,tretal:0,fyrtal:0,yatzy:0,
+            savedValue:[],
+            dis1:false,dis2:false,dis3:false,dis4:false,dis5:false,dis6:false,dis7:false,dis8:false,
+            om:true,
+            press:0,
+            kasta:true,
+            disStanna:true
         },
         methods:{
-            randomValue: function(){
+            randomValue: function()   // methoden körs när användaren trycka på kasta button ----> ger alla 5 tärningar random value mellan 1-5
+            {
+                this.kasta=false;     // enabled buttton (låsa ) efter användaren trycka på kasta button (man kan inte låsa tärningar innan man kasta dem)
+                this.disStanna=false;  // enabled buttton (stanna ) efter användaren trycka på kasta button
                 this.array = this.dices;
                 for (let i = 0 ; i< this.array.length; i++) {
-                    let j = Math.floor(  Math.random() * (5) + 1);
+                    let j = Math.floor(  Math.random() * (5) + 1); //random value mellan 1-5
                     this.array[i] =j;
                 }
                 this.count++;
-                console.log("print array: " + this.array)
-                this.msg='Du har '+(3-this.count)+' kast kvar.  '
+                //  console.log("print array: " + this.array)
+                if(this.count==3)             //  användern har tre kast per omgång( if 3 kastar är klar   )
+                {                             //(True)visa meddelande efter 3rd  kast annars visa hur många kast är kvar
+                    this.msg='kolla på tabellen !! Nu ska du trycka på poäng som du vill spara. '
 
+                } else
+                { this.msg='Du har '+(3-this.count)+' kast kvar.  '} // (false )visa antal kast är kvar
             },
-            stop: function(){
+
+            stop: function() //disabled button kasta och stanna när spelet är slut
+            {
                 let f=false;
-                if (this.count>2)
-                {f=true
+                if (this.count>2 ||this.press==8)//   if(  kast är större än 3 eller  tabellen är fylld )
+                {
+                    f=true // disabled button kasta och stanna if båda är true (spelet är slut)
                     this.sortDice()
                 }
+
+
                 return f;
 
             },
-            saveDice:function (index) {
-                console.log("print index: " + index)
-                this.savedArray.push(this.array[index])
-                this.array.splice(index,1)
-                console.log("print array: " + this.array)
-                console.log("print saved array: " + this.savedArray)
 
-
+            saveDice:function (index)    // låsa in tärningar (Ta tärningarna)
+            {
+                this.savedArray.push(this.array[index])     //pusha in valda  tärningar till savedArray
+                this.array.splice(index,1)       // ta bort valda  tärningar från tärningar array
             },
-            returnDice:function (index) {
-                console.log("print index: " + index)
-                this.array.push(this.savedArray[index])
-                this.savedArray.splice(index,1)
-                console.log("print array: " + this.array)
-                console.log("print saved array: " + this.savedArray)
 
-
+            returnDice:function (index)   // låsa upp tärningar (Ta tillbaka tärningarna)
+            {
+                this.array.push(this.savedArray[index])        //pusha in valda  tärningar till array
+                this.savedArray.splice(index,1)       // ta bort valda  tärningar från  savedArray
             },
-            sortDice:function () {
-                console.log("print array: " + this.array)
-                console.log("print saved array: " + this.savedArray)
 
-                this.final=this.array.concat(this.array)
+            stanna:function()    // för att visa message när user vill inte kasta mer och stanna
+            {
+                this.msg='Du har stannat. Nu ska du kolla på tabellen och trycka på poäng som du vill spara. '
+                this.sortDice()
+            },
+
+            sortDice:function () //Beräkna spelet
+            {
+
+                this.final=this.array.concat(this.array)     // final array (samla alla tärningarna i en array )
                 this.final=this.array.concat(this.savedArray)
-
-                console.log("print final array: " + this.final)
-
-
-                let onesCont = 0
+                //    console.log("print final array: " + this.final)
+                let onesCont = 0 // counter för ettor
                 let twosCont = 0
                 let threesCont = 0
                 let foursCont = 0
-                let fivesCont = 0
+                let fivesCont = 0// counter för femmor
 
                 for (let i = 0 ; i< 5; i++){
                     switch (this.final[i]) {
-                        case 1: onesCont++; break;
+                        case 1: onesCont++; break; //Beräkna ettor
                         case 2: twosCont++; break;
                         case 3: threesCont++; break;
                         case 4: foursCont++; break;
-                        case 5: fivesCont++; break;
+                        case 5: fivesCont++; break; //Beräkna femmor
                     }
                 }
 
-                /*  console.log("ones    "+onesCont)
-                  console.log("twos    "+twosCont)
-                  console.log("threes  "+threesCont)
-                  console.log("fours   "+foursCont)
-                  console.log("fives   "+fivesCont)*/
+                if (onesCont==3||twosCont==3||threesCont==3||foursCont==3||fivesCont==3) //Beräkna tretal användaren får 30 poäng
+                {this.tretal=30 }
+                if (onesCont==4||twosCont==4||threesCont==4||foursCont==4||fivesCont==4) //Beräkna fyrtal användaren får 40 poäng
+                {this.fyrtal=40 }
+                if (onesCont==5||twosCont==5||threesCont==5||foursCont==5||fivesCont==5)//Beräkna yatzy användaren får 50 poäng
+                {this.yatzy=50 }
 
-                onesCont = onesCont*1
+                //console.log("fives   "+fivesCont)
+                onesCont = onesCont*1                 //Beräkna ettor poäng (antal ettor *1)
                 twosCont = twosCont*2
                 threesCont = threesCont*3
                 foursCont = foursCont*4
-                fivesCont = fivesCont*5
-                /*    console.log("___________________________    ");
-                     console.log("ones    "+onesCont);
-                     console.log("twos    "+twosCont);
-                     console.log("threes  "+threesCont);
-                     console.log("fours   "+foursCont);
-                     console.log("fives   "+fivesCont);*/
-                this.ett=onesCont;
+                fivesCont = fivesCont*5               //Beräkna ettor poäng (antal femmor *5)
+
+                //console.log("fives   "+fivesCont);
+                this.ett=onesCont;                    //ettor poäng
                 this.tva=twosCont;
                 this.tre=threesCont;
                 this.fyra=foursCont;
-                this.fem=fivesCont;
+                this.fem=fivesCont;                   //femmor poäng
 
                 this.count=3;
-                this.hog= Math.max(this.ett,this.tva,this.tre, this.fyra,this.fem)
+                this.kasta=true;     // disable buttton (låsa ) efter användaren trycka på kasta button (man kan inte låsa tärningar innan man kasta dem)
+                this.disStanna=true;  // disable buttton (stanna ) efter användaren trycka på kasta button
 
-                this.msg='Din högsta poäng är:'+this.hog;
-                this.isfinished=true;
 
             },
-            newRound:function () {
+
+            choosePoints:function(i) // metoden ta button i för att fylla upp alla poäng på rätt platser
+            {
+                this.press++;                      // savedValue array length
+                this.om=false;    // för att disable button (till nästa omgång)
+
+                if(i==1)                           // if i ==1  --> första td (Ettor)
+                {
+                    this.savedValue[0]=this.ett;   // Spara ettor poäng i savedValue array
+                    this.dis1=true;                // för att disable Ettor button efter man välja Ettor
+                    this.sum=this.sum+this.ett;    // räkna summa (addera Ettor poäng till summan)
+                }
+                else if(i==2)                      // if i ==2  --> andra td (Tvåor)
+                {
+                    this.savedValue[1]=this.tva;   // Spara Tvåor poäng i savedValue array
+                    this.dis2=true;                // för att disable Tvåor button efter man välja Tvåor
+                    this.sum=this.sum+this.tva;    // räkna summa (addera Tvåor poäng till summan)
+                }
+                else if(i==3){this.savedValue[2]=this.tre;
+                    this.dis3=true;
+                    this.sum=this.sum+this.tre;
+                }
+                else if(i==4){this.savedValue[3]=this.fyra;
+                    this.dis4=true;
+                    this.sum=this.sum+this.fyra;
+                }
+                else if(i==5){
+                    this.savedValue[4]=this.fem;
+                    this.dis5=true;
+                    this.sum=this.sum+this.fem;
+                }
+                else if(i==6){
+                    this.savedValue[5]=this.tretal;
+                    this.dis6=true;
+                    this.sum=this.sum+this.tretal;
+                }
+                else if(i==7){
+                    this.savedValue[6]=this.fyrtal;
+                    this.dis7=true;
+                    this.sum=this.sum+this.fyrtal;
+                }
+                else if(i==8){
+                    this.savedValue[7]=this.yatzy;
+                    this.dis8=true;
+                    this.sum=this.sum+this.yatzy;
+                }
+                if(this.press==8)    // när användaren fylla upp alla poäng på tabellen ----->visa upp poäng summan
+                {
+                    this.msg="Bra jobbat! du har: "+ this.sum +"  poäng" //visa upp poäng summan
+                }
+                this.isfinished=true;                 // visa button (till nästa omgång) när akuellt omgången är slut
+
+            },
+
+            newRound:function () // när användaren trycka på button (till nästa omgång) ----->Återställ värden för att börja nytt omgång
+            {
 
                 this.count=0;
                 this.isfinished=false;
-                console.log(this.sum);
-                console.log(this.hog)
-
-                this.sum=this.sum+this.hog;
-                this.sumMsg='Du har '+this.sum+' poäng';
-                console.log(this.sum)
-                console.log(this.hog)
-
+                this.dis=false;
+                this.ett=0; this.tva=0; this.tre=0; this.fyra=0;this.fem=0;this.tretal=0;this.fyrtal=0;this.yatzy=0;
+                this.final=[];
+                this.savedArray=[];
+                this.array=[];
+                this.dices=[1,2,3,4,5];
+                this.kasta=true
+                this.msg='Tryck på kasta!';     // visa Tryck på kasta meddelande igen
 
             }
-
-
-
-
-
 
         }
     })

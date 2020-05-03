@@ -1,19 +1,22 @@
-*{ background-color: gainsboro}
+*{ background-color: #eeeeee;
+ font-family: "Calibri Light";
+}
 #app{
 
-    width: 50%;
+    width: 60%;
     margin: 0 auto;
     display: flex;
+    margin-top: 10px;
 
 }
+
+/* för ipad  och mobil ipap width=768 / mobil width =375*/
 @media  (max-width:769px) {
     #app{
-
         width: 100%;
-
-
+        margin-top: 0px;
     }
-}
+   }
 .dice_1 {
     width: 68px;
     height:68px;
@@ -21,57 +24,86 @@
 
 }
 .dice_2 {
+
     width: 68px;
     height:68px;
     background: url(https://4.bp.blogspot.com/-5UWsgY1Q6kA/W8mB9wxOBLI/AAAAAAAAIBU/7uD8yv2FwNY6lWdUag_OakZuen3zK5BgwCLcBGAs/s1600/spr_dice_2.png) no-repeat;
 
 }
 .dice_3 {
+
     width: 68px;
     height:68px;
     background: url(https://3.bp.blogspot.com/-1lUD8MTEqQk/W8mB93hB7kI/AAAAAAAAIBQ/uT4pdJC5UnYNOLMu8tEHfyqUJPUG6l2OwCLcBGAs/s1600/spr_dice_3.png) no-repeat;
 
 }
 .dice_4 {
+
     width: 68px;
     height:68px;
     background: url(https://1.bp.blogspot.com/-odpB6fIc0_8/W8mB961bKEI/AAAAAAAAIBM/bmwOYn0zd64E0UUYPr_-KEAfPRulv2ZuACLcBGAs/s1600/spr_dice_4.png) no-repeat;
 
 }
 .dice_5 {
+
     width: 68px;
     height:68px;
     background: url(https://1.bp.blogspot.com/-rhbQCCOHvt0/W8mB-8fLGBI/AAAAAAAAIBY/kjBMOxRTpa0uAX87UpM_56BLqRI58jUqwCLcBGAs/s1600/spr_dice_5.png) no-repeat;
 
 }
 
-/*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
-/* TABLE */
+/* tabell */
 #centerColumn{
     width: 50%;
-    padding-top: 30px;
+    padding-top: 20px;
+    padding-left:15px;
+
 
 }
 #diceCon{
     width: 25%;
     margin: 0 auto;
+    padding-top: 20px;
     padding-left:30px;
-    padding-top: 30px;
-
 }
 #savedDice{
     width: 25%;
-    padding-right: 30px;
-    padding-top: 30px;
-
+    margin: 0 auto;
+    padding-right: 10px;
+    padding-top: 20px;
 }
 #resultTable {
-
+width: 90%;
 }
 #resultTable, #resultTable th, #resultTable td {
     border:1px solid black;
 }
-button{
-    background-color: silver;
+#resultTable td{
+padding-left: 15px;
 }
+.diceB{
+
+    background-color: gray;
+    display: inline-block;
+    padding: 3px 13px;
+    font-size: 21px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    margin-top: 2px;
+    margin-bottom: 20px;
+
+}
+p{
+    font-size: 18px;
+}
+button{
+    padding: 3px 13px;
+    border: hidden;
+   }
+
 
